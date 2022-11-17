@@ -16,7 +16,8 @@ Route::get('/cat/creatListScanPage', [CatController::class, 'creatListScanPage']
 Route::get('/cat/loadingPages', [CatController::class, 'loadingPages']);
 
 Route::prefix('good')->group(function () {
-    Route::get('loadingPages/{kolvo?}', [GoodController::class, 'loadingPages']);
+    // перенесено в апи
+    // Route::get('loadingPages/{kolvo?}', [GoodController::class, 'loadingPages']);
     Route::get('loadingPagesPhantom', [GoodController::class, 'loadingPagesPhantom']);
     Route::get('parsingGoods', [GoodController::class, 'parsingGoods']);
 });
@@ -34,7 +35,8 @@ Route::get('/', function () {
     $in['items'][] = ['href' => '/cat/creatListScanPage', 'name' => 'сформировать список страниц с товарами для скана'];
 
     $in['items'][] = ['href' => '/cat/loadingPages', 'name' => 'загрузка страниц каталогов'];
-    $in['items'][] = ['href' => '/good/loadingPages', 'name' => 'загрузка страниц товаров (стар)'];
+
+    $in['items'][] = ['href' => '/api/good/loadingPages', 'name' => 'API / good / загрузка страниц товаров (стар)'];
     $in['items'][] = ['href' => '/good/loadingPagesPhantom', 'name' => 'загрузка страниц товаров (норм)'];
 
     $in['items'][] = ['href' => '/good/parsingGoods', 'name' => 'парсим товар по полной странице ( new > full )'];
