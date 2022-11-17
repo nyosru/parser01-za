@@ -30,6 +30,9 @@ use App\Http\Controllers\CatController;
 class GoodController extends Controller
 {
 
+    // куда сохраняем картинку в сторадж
+    static public $folderToImg = '/data_za/gallery/';
+
     /**
      * парсинг страниц товаров ( тащим загруженные и отправляем на парсинг )
      *
@@ -61,13 +64,13 @@ class GoodController extends Controller
         foreach ($goods as $good) {
             $goodPage = Page::where('uri', 'https://zakrepi.ru/catalog/' . $good->uri . '?isAjax=true')->limit(1)->get();
             echo '<br/><br/>' . '<a href="' . ('https://zakrepi.ru/catalog/' . $good->uri . '?isAjax=true') . '" >' . 'https://zakrepi.ru/catalog/' . $good->uri . '?isAjax=true' . '</a>';
-            $r = self::parsingGoodsFromHtml($goodPage[0]->html);
+            $r = self::parsingGoodsFromHtml($goodPage[0]->html, $good->uri);
             echo '<pre>', print_r($r), '</pre>';
             // echo '<pre>', htmlspecialchars($html0), '</pre>';
         }
     }
 
-    public function parsingGoodsFromHtml($html)
+    public function parsingGoodsFromHtml($html, $goodUri = '')
     {
 
         $crawler = new Crawler($html);
@@ -84,7 +87,45 @@ class GoodController extends Controller
 
         $ar['good']['cat_id'] = $ar['cats-save']['nowCat'];
 
+        $ar['good']['img'] = self::parsingGoodSaveImg($goodUri, $ar['good']['imgOrigin'] ?? '');
+
+        // dd($ar);
+
         return $ar;
+    }
+
+    /**
+     * тащим из страницы товара инфу что есть о товаре
+     */
+    public function parsingGoodSaveImg($goodUri, $ImgLink)
+    {
+        $ar = [];
+
+        $info = new \SplFileInfo($ImgLink);
+        // var_dump($info->getExtension());
+
+        $newName = $goodUri . '.' . $info->getExtension();
+        $newImg = '/public' . self::$folderToImg . $newName;
+
+        if (Storage::exists($newImg)) {
+            $newName = $goodUri . '.' . rand(100, 999)  .  '.' . $info->getExtension();
+            $newImg = '/public' . self::$folderToImg . $newName;
+        }
+
+        // if (Storage::exists($newImg)) {
+        //     $inGood2['dop-image'] = 'est';
+        // } else {
+        Storage::put($newImg, file_get_contents($ImgLink));
+        if (Storage::exists($newImg)) {
+            return $newName;
+            // $inGood2['dop-image'] = 'copyed';
+        } else {
+            // $inGood2['dop-image'] = 'not copyed';
+            return false;
+        }
+        // }
+
+        // return $ar;
     }
 
     /**
@@ -98,6 +139,31 @@ class GoodController extends Controller
             $g['name'] = $crawler->filter('h1[itemprop=name]')->text();
         } catch (\Throwable $th) {
         }
+
+
+        try {
+            $g['imgOrigin'] = $crawler->filter('a[itemprop=image]')->attr('href');
+
+            // if( !empty( $g['img'] ) ){
+            //     file_put_contents(  file_get_contents($g['img'])
+
+            //     // if (Storage::exists($newImg)) {
+            //     //     $inGood2['dop-image'] = 'est';
+            //     // } else {
+            //     //     Storage::put('/public/data_za/gallery/' . $goodUri . '.' . $extension, file_get_contents($inGood2['img']));
+            //     //     if (Storage::exists($newImg)) {
+            //     //         $inGood2['dop-image'] = 'copyed';
+            //     //     } else {
+            //     //         $inGood2['dop-image'] = 'not copyed';
+            //     //     }
+            //     // }
+
+            // }
+
+        } catch (\Throwable $th) {
+        }
+
+
         try {
             $g['opis'] = $crawler->filter('div[itemprop=description]')->text();
         } catch (\Throwable $th) {
@@ -563,7 +629,7 @@ class GoodController extends Controller
         $timerStart = microtime(true);
         $nn = 0;
 
-        $pages = Good::where('load-type', 'new')->limit(10)->get();
+        $pages = Good::where('load-type', 'new')->limit(5)->get();
         foreach ($pages as $p) {
 
             $nn++;
@@ -585,7 +651,8 @@ class GoodController extends Controller
             if (!empty($load['content'])) {
 
                 echo '<br/> есть контент';
-                $ww = self::parsingGoodsFromHtml($load['content']);
+                $ww = self::parsingGoodsFromHtml($load['content'], $p->uri ?? '');
+
                 $new = array_merge($p->toArray(), $ww['good']);
                 $new['load-type'] = 'loaded';
                 $polya = [
