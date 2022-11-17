@@ -627,18 +627,21 @@ class GoodController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function loadingPages( $kolvo = 10 )
+    public function loadingPages($kolvo = 10)
     {
 
-// dd( __FILE__, __LINE__ , $kolvo );
+        // dd( __FILE__, __LINE__ , $kolvo );
 
-echo __FILE__, __LINE__ ;
+        echo __FILE__, __LINE__;
 
         $timerStart = microtime(true);
         $nn = 0;
 
         // $pages = Good::where('load-type', 'new')->limit(5)->get();
         $pages = Good::where('load-type', 'new')->limit($kolvo)->get();
+
+        echo '<br/>страниц для парсинга найдено: ' . $pages->count();
+
         foreach ($pages as $p) {
 
             $nn++;
@@ -749,8 +752,8 @@ echo __FILE__, __LINE__ ;
             // break;
 
         }
-        
-        dd( __FILE__, __LINE__ , $kolvo );
+
+        // dd(__FILE__, __LINE__, $kolvo);
 
         if ($nn > 0)
             echo '<script> location.reload(); </script>';
