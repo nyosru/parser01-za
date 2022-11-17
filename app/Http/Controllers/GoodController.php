@@ -630,9 +630,7 @@ class GoodController extends Controller
     public function loadingPages( $kolvo = 10 )
     {
 
-        ini_set('display_errors', 1); 
-        ini_set('display_startup_errors', 1); 
-        error_reporting(E_ALL);
+dd( __FILE__, __LINE__ , $kolvo );
 
         $timerStart = microtime(true);
         $nn = 0;
