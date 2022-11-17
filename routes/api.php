@@ -22,7 +22,8 @@ use App\Http\Controllers\GoodController;
 
 Route::prefix('good')->group(function () {
     // парсим полные страницы товаров
-    Route::get('loadingPages/{kolvo?}', [GoodController::class, 'loadingPages']);
+    Route::get('loadingPages/{kolvo?}', [GoodController::class, 'loadingPages'])
+        ->where('kolvo', '[0-9]+');
     // Route::get('loadingPagesPhantom', [GoodController::class, 'loadingPagesPhantom']);
     // Route::get('parsingGoods', [GoodController::class, 'parsingGoods']);
 });
