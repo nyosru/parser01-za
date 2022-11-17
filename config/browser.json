@@ -1,0 +1,12 @@
+{
+    "firefox": {
+        "default": "106.0",
+        "versions": {
+            "106.0": {
+                "image": "selenoid/firefox:106.0",
+                "port": "4444",
+                "path": "/wd/hub"
+            }
+        }
+    }
+}
