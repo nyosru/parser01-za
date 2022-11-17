@@ -99,6 +99,10 @@ class GoodController extends Controller
      */
     public function parsingGoodSaveImg($goodUri, $ImgLink)
     {
+
+        if (empty($goodUri) || empty($ImgLink))
+            return '';
+
         $ar = [];
 
         $info = new \SplFileInfo($ImgLink);
