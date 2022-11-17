@@ -627,13 +627,14 @@ class GoodController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function loadingPages()
+    public function loadingPages( $kolvo = 10 )
     {
 
         $timerStart = microtime(true);
         $nn = 0;
 
-        $pages = Good::where('load-type', 'new')->limit(5)->get();
+        // $pages = Good::where('load-type', 'new')->limit(5)->get();
+        $pages = Good::where('load-type', 'new')->limit($kolvo)->get();
         foreach ($pages as $p) {
 
             $nn++;

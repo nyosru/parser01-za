@@ -16,7 +16,7 @@ Route::get('/cat/creatListScanPage', [CatController::class, 'creatListScanPage']
 Route::get('/cat/loadingPages', [CatController::class, 'loadingPages']);
 
 Route::prefix('good')->group(function () {
-    Route::get('loadingPages', [GoodController::class, 'loadingPages']);
+    Route::get('loadingPages/{kolvo?}', [GoodController::class, 'loadingPages']);
     Route::get('loadingPagesPhantom', [GoodController::class, 'loadingPagesPhantom']);
     Route::get('parsingGoods', [GoodController::class, 'parsingGoods']);
 });
