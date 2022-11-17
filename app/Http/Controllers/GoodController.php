@@ -630,7 +630,9 @@ class GoodController extends Controller
     public function loadingPages( $kolvo = 10 )
     {
 
-dd( __FILE__, __LINE__ , $kolvo );
+// dd( __FILE__, __LINE__ , $kolvo );
+
+echo __FILE__, __LINE__ ;
 
         $timerStart = microtime(true);
         $nn = 0;
@@ -747,6 +749,8 @@ dd( __FILE__, __LINE__ , $kolvo );
             // break;
 
         }
+        
+        dd( __FILE__, __LINE__ , $kolvo );
 
         if ($nn > 0)
             echo '<script> location.reload(); </script>';
