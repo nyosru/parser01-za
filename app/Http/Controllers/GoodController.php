@@ -531,96 +531,96 @@ class GoodController extends Controller
         return $ms;
     }
 
-    /**
-     * загрузка страниц товаров 
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function loadingPagesPhantom()
-    {
+    // /**
+    //  * загрузка страниц товаров 
+    //  *
+    //  * @return \Illuminate\Http\Response
+    //  */
+    // public function loadingPagesPhantom()
+    // {
 
-        $r = [];
+    //     $r = [];
 
-        $web_driver = RemoteWebDriver::create(
-            // "http://selenoid:4444/wd/hub",
-            "http://localhost:4444/wd/hub",
-            // "http://192.168.112.4:4444/wd/hub",
-            // "http://192.168.112.1:4444/wd/hub",
-            // "selenoid:4444/wd/hub",
-            // "http://localhost:4444/wd/hub",
-            // "http://127.0.0.1:4444/wd/hub",
-            // "http://localhost:4444",
-            // "http://selenoid:4444/wd/hub",
-            array(
-                "browserName" => "firefox",
-                "browserVersion" => "106.0"
-            )
-        );
+    //     $web_driver = RemoteWebDriver::create(
+    //         // "http://selenoid:4444/wd/hub",
+    //         "http://localhost:4444/wd/hub",
+    //         // "http://192.168.112.4:4444/wd/hub",
+    //         // "http://192.168.112.1:4444/wd/hub",
+    //         // "selenoid:4444/wd/hub",
+    //         // "http://localhost:4444/wd/hub",
+    //         // "http://127.0.0.1:4444/wd/hub",
+    //         // "http://localhost:4444",
+    //         // "http://selenoid:4444/wd/hub",
+    //         array(
+    //             "browserName" => "firefox",
+    //             "browserVersion" => "106.0"
+    //         )
+    //     );
 
-        $web_driver->get('https://www.google.com/');
+    //     $web_driver->get('https://www.google.com/');
 
-        echo 'ok';
+    //     echo 'ok';
 
-        dd('eee');
+    //     dd('eee');
 
-        //         $host = 'http://localhost:4444/wd/hub';
-        //         $capabilities = DesiredCapabilities::chrome();
-        //         $driver = RemoteWebDriver::create($host, $capabilities);
-        //         $driver->get('https://www.google.com/');
-        //         print 'ok';
+    //     //         $host = 'http://localhost:4444/wd/hub';
+    //     //         $capabilities = DesiredCapabilities::chrome();
+    //     //         $driver = RemoteWebDriver::create($host, $capabilities);
+    //     //         $driver->get('https://www.google.com/');
+    //     //         print 'ok';
 
-        // dd('fdf');
+    //     // dd('fdf');
 
 
 
-        $timerStart = microtime(true);
+    //     $timerStart = microtime(true);
 
-        $nn = 0;
+    //     $nn = 0;
 
-        $pages = Good::where('load-type', 'new')->limit(10)->get();
-        foreach ($pages as $p) {
+    //     $pages = Good::where('load-type', 'new')->limit(10)->get();
+    //     foreach ($pages as $p) {
 
-            $nn++;
+    //         $nn++;
 
-            $r[] = $p->toArray();
+    //         $r[] = $p->toArray();
 
-            // $page = 'https://zakrepi.ru/catalog/' . $p->uri;
-            // // $phantom_script = dirname(__FILE__) . '/i3.js' . ' ' . $page . ' ' . $to;
-            // //         // http://localhost/storage/phantom/i3.js
-            // $to = './../xxxx.htm';
-            // $phantom_script = 'http://localhost/storage/phantom/i3.js' . ' ' . $page . ' ' . $to;
+    //         // $page = 'https://zakrepi.ru/catalog/' . $p->uri;
+    //         // // $phantom_script = dirname(__FILE__) . '/i3.js' . ' ' . $page . ' ' . $to;
+    //         // //         // http://localhost/storage/phantom/i3.js
+    //         // $to = './../xxxx.htm';
+    //         // $phantom_script = 'http://localhost/storage/phantom/i3.js' . ' ' . $page . ' ' . $to;
 
-            // // //        // //     $phantom_script = 'i3.js' . ' ' . $page . ' ' . $to;
-            // // // //         // //     echo $phantom_script;
-            // // // //         // //     echo '<br/>';
-            // // $response =  shell_exec('phantomjs ' . $phantom_script . ' 2>&1 &');
-            // $response =  shell_exec('http://localhost:4444/wd/hub/ ' . $phantom_script . ' 2>&1 &');
+    //         // // //        // //     $phantom_script = 'i3.js' . ' ' . $page . ' ' . $to;
+    //         // // // //         // //     echo $phantom_script;
+    //         // // // //         // //     echo '<br/>';
+    //         // // $response =  shell_exec('phantomjs ' . $phantom_script . ' 2>&1 &');
+    //         // $response =  shell_exec('http://localhost:4444/wd/hub/ ' . $phantom_script . ' 2>&1 &');
 
-            $host = 'http://localhost:4444/wd/hub'; // прослушивается Selenium Standalone Server
-            // $host = 'http://0.0.0.0:4444/wd/hub'; // прослушивается Selenium Standalone Server
-            // $host = 'http://localhost:4444'; // прослушивается Selenium Standalone Server
-            // $desiredCapabilities = DesiredCapabilities::chrome();
+    //         $host = 'http://localhost:4444/wd/hub'; // прослушивается Selenium Standalone Server
+    //         // $host = 'http://0.0.0.0:4444/wd/hub'; // прослушивается Selenium Standalone Server
+    //         // $host = 'http://localhost:4444'; // прослушивается Selenium Standalone Server
+    //         // $desiredCapabilities = DesiredCapabilities::chrome();
 
-            // $desiredCapabilities = DesiredCapabilities::firefox();
-            // $driver = RemoteWebDriver::create($host, $desiredCapabilities);
+    //         // $desiredCapabilities = DesiredCapabilities::firefox();
+    //         // $driver = RemoteWebDriver::create($host, $desiredCapabilities);
 
-            $driver = RemoteWebDriver::create($host, DesiredCapabilities::firefox());
-            $driver->get("http://php-cat.com");
+    //         $driver = RemoteWebDriver::create($host, DesiredCapabilities::firefox());
+    //         $driver->get("http://php-cat.com");
 
-            dd([__LINE__, '$p' => $p, '$response' => $response]);
+    //         dd([__LINE__, '$p' => $p, '$response' => $response]);
 
-            //         echo PHP_EOL . '<br/>- ' . $cat;
-            // // //         // if ($nn <= 2) {
-            // // //         $t = round(microtime(true) - $start, 4);
+    //         //         echo PHP_EOL . '<br/>- ' . $cat;
+    //         // // //         // if ($nn <= 2) {
+    //         // // //         $t = round(microtime(true) - $start, 4);
 
-            // // echo PHP_EOL.' l '.round($t-$last,2);
+    //         // // echo PHP_EOL.' l '.round($t-$last,2);
 
-        }
+    //     }
 
-        dd($r);
+    //     dd($r);
 
-        return $r;
-    }
+    //     return $r;
+    // }
 
     /**
      * загрузка страниц товаров 
