@@ -263,10 +263,12 @@ class CatController extends Controller
 
         $ee = [];
 
-        $nowCat0 = Cat::whereNull('pages');
+        $nowCat0 = Cat::whereNull('cat_up_id')->whereNull('pages');
         $nowCatColvo = $nowCat0->count();
+
         echo '$nowCatColvo:' . $nowCatColvo . ' ( ' . round(($nowCatColvo * 3) / 60, 1) . ' мин ) ';
-        $nowCat = Cat::whereNull('pages')->limit(500)->get();
+
+        $nowCat = Cat::whereNull('cat_up_id')->whereNull('pages')->limit(500)->get();
         $timerStart = microtime(true);
 
         // dd($nowCat);

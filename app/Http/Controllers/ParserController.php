@@ -71,9 +71,15 @@ class ParserController extends Controller
     {
         $n = self::howNextStep();
 
-        if ($n['now'] == 'parsing_cats_page') {
+        if ($n['now'] == 'scan_list_cat') {
+            $n['result'] = CatController::get();
+        } elseif ($n['now'] == 'parsing_cats_page') {
             $n['result'] = CatController::loadingParsingCatPages();
+        } elseif ($n['now'] == 'scan_kolvo_pages') {
+            $n['result'] = CatController::get1page();
         }
+
+        dd($n);
 
         return $n;
     }
@@ -88,7 +94,7 @@ class ParserController extends Controller
     {
         $r = [];
         $r['all'] = Cat::all()->count();
-        $r['no_pages'] = Cat::whereNull('pages')->count();
+        $r['no_pages'] = Cat::whereNull('cat_up_id')->whereNull('pages')->count();
         return $r;
     }
 
