@@ -151,7 +151,8 @@ class CatController extends Controller
         $pages = CatPageParsing::where('status', 'new')->limit(100)->get();
         foreach ($pages as $p) {
 
-            echo '<pre>', print_r($p->toArray()), '</pre>';
+            echo PHP_EOL.'<Br/>'.$p->cat_uri.' '.$p->page.' | ';
+            // echo '<pre>', print_r($p->toArray()), '</pre>';
 
             $html = LoaderController::loadPageFromInet(
                 'https://zakrepi.ru/categories/' . $p->cat_uri,
