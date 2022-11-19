@@ -10,10 +10,6 @@ use Illuminate\Http\Request;
 class ParserController extends Controller
 {
 
-
-
-
-
     /**
      * какой аг следующий
      * что делать для парсинга

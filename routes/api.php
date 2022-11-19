@@ -21,13 +21,8 @@ use App\Http\Controllers\ParserController;
 //     return $request->user();
 // });
 
-
-
 // 500 раз в минуту
 Route::get('parsing', [ ParserController::class, 'go']);
-
-
-
 
 Route::prefix('good')->group(function () {
     // парсим полные страницы товаров
