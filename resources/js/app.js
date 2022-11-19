@@ -30,3 +30,23 @@ Vue.component('example-component', require('./components/ExampleComponent.vue').
 const app = new Vue({
     el: '#app',
 });
+
+// require('./bootstrap')
+// import Vue from 'vue/dist/vue'
+// window.Vue = require('vue')
+// import App from './App.vue'
+// import Router from 'vue-router'
+// import Axios from 'vue-axios'
+// import axios from 'axios'
+// import { routes } from './routes'
+// Vue.use(Router)
+// Vue.use(Axios, axios)
+// const router = new Router({
+//     mode: 'history',
+//     routes: routes,
+// })
+// const app = new Vue({
+//     el: '#app',
+//     router: router,
+//     render: (h) => h(App),
+// })

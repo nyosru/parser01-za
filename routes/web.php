@@ -3,6 +3,10 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CatController;
 use App\Http\Controllers\GoodController;
+use App\Http\Controllers\ParserController;
+
+Route::get('/status', [ParserController::class, 'index']);
+Route::get('/nowStep', [ParserController::class, 'howNextStep']);
 
 Route::get('/ss', function () {
     dd(123);
@@ -22,10 +26,12 @@ Route::prefix('good')->group(function () {
     Route::get('parsingGoods', [GoodController::class, 'parsingGoods']);
 });
 
-Route::get('/', function () {
+Route::get('/1', function () {
 
     $in = [];
     $in['items'] = [];
+
+    $in['items'][] = ['href' => '/status', 'name' => 'общий обзор'];
 
     $in['items'][] = ['href' => '/ss', 'name' => 'пустая страничка'];
     $in['items'][] = ['href' => '/cat/list', 'name' => 'список каталогов'];
@@ -49,3 +55,11 @@ Route::get('/', function () {
 
     return view('welcome1', $in);
 });
+
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+Route::get('{any}', function () {
+    return view('layouts.app');
+})->where('any', '.*');

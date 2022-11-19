@@ -15,7 +15,7 @@ class LoaderController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function loadPageFromInet(string $uri, string $saveToFile, array $dops = [])
+    public function loadPageFromInet(string $uri, $saveToFile = null, array $dops = [])
     {
         $r = [
             'uri' => $uri,
@@ -39,10 +39,9 @@ class LoaderController extends Controller
 
         // если в бд есть страница, тащим от туда
         if ($PageDB->count() == 1) {
-            
+
             $r['content'] = $PageDB[0]->html;
             $r['type'] = 'estInDb';
-
         } else {
 
             if (Storage::exists($saveToFile)) {
@@ -67,9 +66,13 @@ class LoaderController extends Controller
                     $uri,
                     $dops['addToGet'] ?? []
                 );
+
+                if (empty($saveToFile))
+                    return $rr->body();
+
                 $r['content'] = $rr->body();
                 // Storage::put($saveToFile, $r['content']);
-                
+
             }
 
             Page::insert([
@@ -78,7 +81,6 @@ class LoaderController extends Controller
                     'html' => $r['content']
                 ]
             ]);
-
         }
 
         // $ee['$type'] = $type;

@@ -10,10 +10,9 @@
         "production": "mix --production"
     },
     "dependencies": {
-        "casperjs": "^1.1.4",
         "npm": "^8.19.2",
-        "phantomjs-prebuilt": "^2.1.16",
-        "selenium-webdriver": "^4.5.0"
+        "vue-axios": "^3.5.2",
+        "vue-router": "^4.1.6"
     },
     "devDependencies": {
         "@popperjs/core": "^2.10.2",
@@ -22,10 +21,11 @@
         "laravel-mix": "^6.0.6",
         "lodash": "^4.17.19",
         "postcss": "^8.1.14",
-        "resolve-url-loader": "^3.1.2",
+        "resolve-url-loader": "^5.0.0",
         "sass": "^1.32.11",
         "sass-loader": "^11.0.1",
-        "vue": "^2.6.12",
-        "vue-template-compiler": "^2.6.12"
+        "vue": "^3.2.45",
+        "vue-loader": "^17.0.1",
+        "vue-template-compiler": "^2.7.14"
     }
 }

@@ -142,6 +142,64 @@ class CatController extends Controller
 
 
     /**
+     * загрузка страниц каталогов для парсинга и парсинг ( тащим мини товары со страницы каталога )
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function loadingParsingCatPages()
+    {
+        $pages = CatPageParsing::where('status', 'new')->limit(100)->get();
+        foreach ($pages as $p) {
+
+            echo '<pre>', print_r($p->toArray()), '</pre>';
+
+            $html = LoaderController::loadPageFromInet(
+                'https://zakrepi.ru/categories/' . $p->cat_uri,
+                // 'https://zakrepi.ru/categories/' . $p->cat_uri,
+                // $pageToServer,
+                null,
+                [
+                    'addToGet' => [
+                        'page' => $p->page,
+                        'isAjax' => 'true',
+                    ]
+                ]
+            );
+
+            // dd($load);
+            $ee = [];
+
+            $crawler = new Crawler($html);
+
+            // $ar = [];
+
+            // // $ar['cats'] = self::parsingGoodCats($crawler);
+            // $ar['cats'] = CatController::parsingGoodCats($crawler);
+
+            $ee['goodsOnPage'] = self::getOnCatPage_Goods2($crawler);
+            $ee['goodsAdd'] = self::saveGoods2($ee['goodsOnPage']);
+            // $ee['html'] = $content;
+
+            CatPageParsing::find($p->id)
+                // ->where('status', 'new')->limit(20)->get()
+                ->update(['status' => 'ok']);
+
+            // dd($ee);
+
+            // echo '<br/>pageMyHtml: ' . $ee['pageMyHtml'];
+            $timerStop = round(microtime(true) - LARAVEL_START, 3);
+            echo $timerStop . ' сек ';
+
+            flush();
+
+            if ($timerStop > 25) {
+                echo '<script> location.reload(); </script>';
+                break;
+            }
+        }
+    }
+
+    /**
      * загрузка страниц каталогов для парсинга
      *
      * @return \Illuminate\Http\Response
@@ -440,7 +498,7 @@ class CatController extends Controller
             $return['arrayToInsert'][] = [
                 'uri' => $v['link'],
                 'name' => $v['name'],
-                'cat_up_id' => ( isset($v['cat_up']) ? $return['linkInDb'][$v['cat_up']]['id'] ?? NULL : NULL )
+                'cat_up_id' => (isset($v['cat_up']) ? $return['linkInDb'][$v['cat_up']]['id'] ?? NULL : NULL)
             ];
         }
 
@@ -466,6 +524,7 @@ class CatController extends Controller
 
         return $return;
     }
+
     public function saveGoods($goods = [])
     {
 
@@ -543,12 +602,93 @@ class CatController extends Controller
         // return $return;
     }
 
+    public function saveGoods2($goods = [])
+    {
+
+        // dd(__FILE__, __LINE__, __FUNCTION__, $goods);
+        // foreach( // dd($goods);            
+        $return['res0'] = Good::whereIn('uri', array_column($goods, 'uri'))
+            ->delete();
+        $return['res'] = Good::insert($goods);
+
+        // dd($return);
+        return $return;
+
+        // $return = [
+        //     'linkOnStart' => [],
+        //     'linknDb' => [],
+        //     'arrayToInsert' => [],
+        //     'nowCat' => 0
+        // ];
+
+        // // dd([__FUNCTION__, $catSteps, $catSubs]);
+        // // $cc = array_merge($catSteps, $catSubs);
+        // foreach ($catSteps as $c) {
+        //     if (!isset($return['linkOnStart'][$c['link']])) {
+        //         $return['linkOnStart'][] = $c['link'];
+        //         $return['linkOnStart2'][$c['link']] = $c;
+        //         $return['nowCat'] = $c['link'];
+        //     }
+        // }
+
+        // foreach ($catSubs as $c) {
+        //     if (!isset($return['linkOnStart'][$c['link']])) {
+        //         $return['linkOnStart'][] = $c['link'];
+        //         $return['linkOnStart2'][$c['link']] = $c;
+        //     }
+        // }
+
+        // $catsnDb0 = Cat::whereIn('uri', $return['linkOnStart'])->get();
+        // $catsnDb = [];
+        // foreach ($catsnDb0 as $w) {
+        //     // $ca = $w->toArray();
+        //     // $catsnDb[$w->uri] = $ca;
+        //     $return['linkInDb'][$w->uri] = $w->toArray();
+        // }
+
+        // $return['nowCat'] = $return['linkInDb'][$return['nowCat']]['id'] ?? '';
+
+        // foreach ($return['linkOnStart2'] as $k => $v) {
+        //     $return['arrayToInsert'][] = [
+        //         'uri' => $v['link'],
+        //         'name' => $v['name'],
+        //         'cat_up_id' => $return['linkInDb'][$v['cat_up']]['id'] ?? NULL
+        //     ];
+        // }
+
+        // // dd($return);
+
+        // $return['res'] = Cat::upsert(
+        //     $return['arrayToInsert'],
+        //     ['uri'],
+        //     ['name', 'cat_up_id']
+        // );
+
+        // // dd($return);
+        // // if (1 == 2)
+        // //     if (empty($cat->pages)) {
+        // //         $cat->pages = $pageColvo;
+        // //         $cat->save();
+        // //         // dd([
+        // //         //     'line' => __LINE__,
+        // //         //     'cat_name' => $cat->name,
+        // //         //     'cat' => $cat
+        // //         // ]);
+        // //     }
+
+        // return $return;
+    }
+
+
     public function creatListScanPage()
     {
-        $cats = Cat::select(['uri', 'pages'])->orderBy('pages', 'DESC')->limit(20)->get();
+        $cats = Cat::select(['uri', 'pages'])
+            ->whereNull('cat_up_id')
+            // ->orderBy('pages', 'DESC')
+            // ->limit(20)
+            ->get();
 
         $in = [];
-
         foreach ($cats as $v) {
             for ($i = 1; $i <= $v->pages; $i++) {
                 $in[] = [
@@ -559,13 +699,11 @@ class CatController extends Controller
             }
         }
 
-        // dd([$in]);
-
+        // удаляем все записи
+        CatPageParsing::truncate();
+        // записываем все записи
         $ww = CatPageParsing::insert($in);
-        // $ww = CatPageParsing::all();
-        // dd(['creatListScanPage', $ee->toArray()]);
-
-        dd($in);
+        return $ww;
     }
 
     public function showList()
@@ -678,6 +816,85 @@ class CatController extends Controller
         // dd($goods_list);
 
         return $goods_list;
+    }
+
+
+    /**
+     * когда парсим список товаров на странице каталога ... то каждый прогоняем через эту функцию .. и получаем массив данных
+     */
+    public function parseGoodMini($crawler)
+    {
+
+        $re = [
+            'cat-id' => 1,
+            'name' => null,
+            'uri' => null,
+            'price' => null,
+            'price-old' => null,
+            'discount' => null,
+            'img' => null,
+            'created_at' => date('Y-m-d H:i:s')
+        ];
+
+        try {
+            $re['name'] = $crawler->filter('.title')->text();
+        } catch (\Throwable $th) {
+            //throw $th;
+            // dd($th->getMessage());
+        }
+
+        try {
+            $re['uri'] = str_replace('/catalog/', '', $crawler->filter('a')->attr('href'));
+        } catch (\Throwable $th) {
+            //throw $th;
+            // dd($th->getMessage());
+        }
+
+        try {
+            $re['price'] = preg_replace("/[^,.0-9]/", '', $crawler->filter('.price')->text());
+        } catch (\Throwable $th) {
+            //throw $th;
+            // dd($th->getMessage());
+        }
+
+        try {
+            $re['price-old'] = preg_replace("/[^,.0-9]/", '', $crawler->filter('.old-price')->text());
+        } catch (\Throwable $th) {
+            //throw $th;
+            // dd($th->getMessage());
+        }
+
+        try {
+            $re['discount'] = $crawler->filter('.discount')->text();
+        } catch (\Throwable $th) {
+            //throw $th;
+            // dd($th->getMessage());
+        }
+
+        // try {
+        //     // $re['img'] = str_replace('/catalog/', '', $crawler->filter('a')->attr('href'));
+        //     $i = $crawler->filter('.no-image');
+        // } catch (\Exception $ex) {
+        try {
+            // $re['img'] = str_replace('/catalog/', '', $crawler->filter('a')->attr('href'));
+            $i = $crawler->filter('img')->attr('srcset');
+            $t = explode(' ', $i);
+            $re['img'] = $t[0] ?? '';
+        } catch (\Throwable $th) {
+            //throw $th;
+            // dd($th->getMessage());
+        }
+        // }
+
+        return $re;
+    }
+
+
+    public function getOnCatPage_Goods2($crawler)
+    {
+        return $crawler->filter('.product-in-list')->each(function (Crawler $node, $i) {
+            return self::parseGoodMini($node);
+        });
     }
 
     /**
