@@ -92,17 +92,20 @@ class GoodController extends Controller
         $goods = Good::where('load-type', 'new')->limit(5)->get();
         $res['origin'] = $goods->toArray();
         $res['origin2'] = [];
+        $res['pageFromInet'] = [];
         // // dd([__FILE__, __LINE__,$goods]);
         foreach ($goods as $good) {
 
-            $res['origin2'][] = $good->toArray();
+            // $res['origin2'][] = $good->toArray();
             // dd($good);
 
+            $res['pageFromInet'][] = 
             $load = LoaderController::loadPageFromInet('https://zakrepi.ru/catalog/' . $good->uri, '', [
                 'addToGet' => ['isAjax' => 'true',]
             ]);
             // $load['result_code'] = 0;
 
+            
             if (!empty($load['content'])) {
 
                 if (strpos($load['content'], 'Страница не найдена') !== false) {
