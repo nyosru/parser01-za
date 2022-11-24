@@ -92,7 +92,8 @@ class ParserController extends Controller
         $n = self::howNextStep();
 
         $n['status'] = self::index();
-        dd(__FILE__, __LINE__);
+
+        dd(__FILE__, __LINE__, [ 11 , 22 , 33 ] );
 
         // dd(__FILE__, __LINE__, $n);
 
