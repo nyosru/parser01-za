@@ -117,12 +117,14 @@ class GoodController extends Controller
                     Good::find($good->id)->delete();
                 }
 
-                $res['pageFromInet'][] = 
-                $good_new = self::parsingGoodsFromHtml($load['content'], $good->uri);
+                $res['pageFromInet'][] =
+                    $good_new = self::parsingGoodsFromHtml($load['content'], $good->uri);
 
                 // $good_save = $good->toArray();
                 $good_n0 = array_merge($good->toArray(), $good_new['good']);
                 $good_n0['load-type'] = 'full';
+
+                $res['pageFromInet'][] = $good_n0;
 
                 $ee = [
                     'cat-id',
@@ -143,6 +145,9 @@ class GoodController extends Controller
                 }
 
                 $good_n['updated_at'] = date('Y-m-d H:i:s');
+
+                $res['pageFromInet'][] =                    $good_n;
+                $res['pageFromInet'][] = [ 0 ];
 
                 // if (isset($good_n['id']))
                 //     unset($good_n['id']);
