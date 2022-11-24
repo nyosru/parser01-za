@@ -94,7 +94,6 @@ class ParserController extends Controller
         $n['status'] = self::index();
 
         // dd(__FILE__, __LINE__, [ 11 , 22 , 33 ] );
-
         // dd(__FILE__, __LINE__, $n);
 
         if ($n['now'] == 'scan_list_cat') {
@@ -113,7 +112,10 @@ class ParserController extends Controller
         } elseif ($n['now'] == 'parsing_goods_new') {
             // dd(__FILE__, __LINE__);
             // $n['result'] = CatController::get1page();
+            echo '<br/>'.__FILE__;
+            echo '<br/>'.__LINE__;
             $r['result'] = GoodController::parsingGoodNewFull();
+
         } elseif ($n['now'] == 'parsing_old_goods') {
             // dd( __FILE__, __LINE__ );
             // $n['result'] = CatController::get1page();
