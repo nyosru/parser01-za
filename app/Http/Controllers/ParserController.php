@@ -16,6 +16,9 @@ class ParserController extends Controller
      */
     public function howNextStep()
     {
+
+        // dd( __FILE__, __LINE__ );
+
         $r = [
             'now_step' => '',
             'variants' => [
@@ -49,12 +52,27 @@ class ParserController extends Controller
 
             $e = self::scanCatalogsScanPages();
 
-            if ($e['new'] > 0) {
+            // если есть неотсканенные страницы каталога
+            if (1 == 2 && $e['new'] > 0) {
                 $r['now'] = 'parsing_cats_page';
             } else {
-                $r['now'] = 'very_good';
+
+                $goods = self::scanGoods();
+                // если есть неотсканенные товары (новые)
+                // dd(__FILE__, __LINE__, $goods);
+                if ($goods['new'] > 0) {
+
+                    // dd(__FILE__, __LINE__, 'сканим новые товары' );
+                    // $r['result'] = GoodController::parsingGoodNewFull();
+                    $r['now'] = 'parsing_goods_new';
+                } else {
+
+                    $r['now'] = 'very_good';
+                }
             }
         }
+
+        // $r['now'] = 'good';
 
         return $r;
         // return response()->json($r);
@@ -69,19 +87,40 @@ class ParserController extends Controller
      */
     public function go()
     {
+        // dd( __FILE__, __LINE__ );
+
         $n = self::howNextStep();
 
+        $n['status'] = self::index();
+        // dd(__FILE__, __LINE__);
+
+        // dd(__FILE__, __LINE__, $n);
+
         if ($n['now'] == 'scan_list_cat') {
+
+            // dd( __FILE__, __LINE__ );
             $n['result'] = CatController::get();
-        } elseif ($n['now'] == 'parsing_cats_page') {
-            $n['result'] = CatController::loadingParsingCatPages();
         } elseif ($n['now'] == 'scan_kolvo_pages') {
+            // dd( __FILE__, __LINE__ );
             $n['result'] = CatController::get1page();
+        } elseif ($n['now'] == 'record_kolvo_page_for_scan') {
+            // dd( __FILE__, __LINE__ );
+            // $n['result'] = CatController::get1page();
+        } elseif ($n['now'] == 'parsing_cats_page') {
+            // dd( __FILE__, __LINE__ );
+            $n['result'] = CatController::loadingParsingCatPages();
+        } elseif ($n['now'] == 'parsing_goods_new') {
+            // dd(__FILE__, __LINE__);
+            // $n['result'] = CatController::get1page();
+            $r['result'] = GoodController::parsingGoodNewFull();
+        } elseif ($n['now'] == 'parsing_old_goods') {
+            // dd( __FILE__, __LINE__ );
+            // $n['result'] = CatController::get1page();
         }
 
-        dd($n);
-
-        return $n;
+        // dd($n);
+        return response()->json($n);
+        // return $n;
     }
 
 
@@ -129,17 +168,22 @@ class ParserController extends Controller
      */
     public function index()
     {
-        $e = self::scanCatalogs();
-        echo 'self::scanCatalogs();';
-        echo '<pre>', print_r($e), '</pre>';
+        $e = [];
 
-        echo 'self::scanCatalogsScanPages();';
-        $e = self::scanCatalogsScanPages();
-        echo '<pre>', print_r($e), '</pre>';
-        echo 'self::scanGoods();';
-        $e = self::scanGoods();
-        echo '<pre>', print_r($e), '</pre>';
-        dd(__FILE__, __LINE__, __FUNCTION__);
+        $e['scanCatalogs'] = self::scanCatalogs();
+        // echo 'self::scanCatalogs();';
+        // echo '<pre>', print_r($e), '</pre>';
+
+        // echo 'self::scanCatalogsScanPages();';
+        $e['scanCatalogsScanPages'] = self::scanCatalogsScanPages();
+        // echo '<pre>', print_r($e), '</pre>';
+
+        // echo 'self::scanGoods();';
+        $e['scanGoods'] = self::scanGoods();
+
+        // echo '<pre>', print_r($e), '</pre>';
+        // dd(__FILE__, __LINE__, __FUNCTION__);
+        return $e;
     }
 
     /**

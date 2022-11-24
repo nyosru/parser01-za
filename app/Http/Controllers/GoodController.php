@@ -77,6 +77,132 @@ class GoodController extends Controller
         }
     }
 
+    /**
+     * тащим список страниц новых и грузим и парсим и записываем в бд
+     */
+    public function parsingGoodNewFull()
+    {
+
+        $res = [
+            'in' => 0,
+            'in_ids' => []
+        ];
+
+        $goods = Good::where('load-type', 'new')->limit(20)->get();
+        // // dd([__FILE__, __LINE__,$goods]);
+        foreach ($goods as $good) {
+
+            // dd($good);
+
+            $load = LoaderController::loadPageFromInet('https://zakrepi.ru/catalog/' . $good->uri, '', [
+                'addToGet' => ['isAjax' => 'true',]
+            ]);
+            // $load['result_code'] = 0;
+
+            if (!empty($load['content'])) {
+
+                if (strpos($load['content'], 'Страница не найдена') !== false) {
+                    $load['result_code'] = 404;
+                    $load['content'] = '';
+                }
+
+                if (!empty($load['result_code']) && $load['result_code'] == 404) {
+                    Good::find($good->id)->delete();
+                }
+
+                $good_new = self::parsingGoodsFromHtml($load['content'], $good->uri);
+
+                // $good_save = $good->toArray();
+                $good_n0 = array_merge($good->toArray(), $good_new['good']);
+                $good_n0['load-type'] = 'full';
+
+                $ee = [
+                    'cat-id',
+                    'name',
+                    'uri',
+                    'img',
+                    'discount',
+                    'opis',
+                    'price',
+                    'price-old',
+                    'articul',
+                    'kod',
+                    'load-type'
+                ];
+                foreach ($good_n0 as $k => $v) {
+                    if (in_array($k, $ee))
+                        $good_n[$k] = $v;
+                }
+
+                $good_n['updated_at'] = date('Y-m-d H:i:s');
+
+                // if (isset($good_n['id']))
+                //     unset($good_n['id']);
+
+                // if (isset($good_n['imgOrigin']))
+                //     unset($good_n['imgOrigin']);
+
+                // echo '<pre>', print_r($good_n), '</pre>';
+
+                // dd(
+                //     //     $good->toArray(), 
+                //     //     // $load, 
+                //     //     // $good_new ?? 'x' , 
+                //     $good_n ?? 'x2',
+                //     //     $rre ?? 'ww'
+                // );
+                // echo ' . ';
+                flush();
+
+                Good::find($good->id)->delete();
+                // // $rre = Good::insert($good_n);
+                if (!empty($good_new['cat-id'])) {
+                    $res['in_ids'][] = Good::insertGetId($good_n);
+                    $res['in']++;
+                }
+
+                // dd(
+                //     //     $good->toArray(), 
+                //     //     // $load, 
+                //     //     // $good_new ?? 'x' , 
+                //     $good_n ?? 'x2',
+                //     //     $rre ?? 'ww'
+                // );
+            }
+
+            // dd(
+            //     $good->toArray(), 
+            //     // $load, 
+            //     // $good_new ?? 'x' , 
+            //     $good_n ?? 'x2',
+            //     $rre ?? 'ww'
+            // );
+
+            // // $ee['type'] = $load['type'];
+            // // $ee['html'] = $load['content'];
+
+            // // dd($load);
+
+            // // if (!function_exists('str_get_html'))
+            // //     include($_SERVER['DOCUMENT_ROOT'] . '/resources/php/simplehtmldom_1_9_1/simple_html_dom.php');
+
+            // // // $html = str_get_html($content);
+            // // $html = str_get_html($load['content']);
+
+            // // self::parsingGoodsFromHtml($html, $uri);
+
+            // // $goodPage = Page::where('uri', 'https://zakrepi.ru/catalog/' . $good->uri . '?isAjax=true')->limit(1)->get();
+            // // echo '<br/><br/>' . '<a href="' . ('https://zakrepi.ru/catalog/' . $good->uri . '?isAjax=true') . '" >' . 'https://zakrepi.ru/catalog/' . $good->uri . '?isAjax=true' . '</a>';
+            // // $r = self::parsingGoodsFromHtml($goodPage[0]->html, $good->uri);
+            // // echo '<pre>', print_r($r), '</pre>';
+            // // // echo '<pre>', htmlspecialchars($html0), '</pre>';
+        }
+        return $res;
+    }
+
+    /**
+     * тащим инфу из полной страницы товара
+     */
     public function parsingGoodsFromHtml($html, $goodUri = '')
     {
 
@@ -92,7 +218,7 @@ class GoodController extends Controller
         $ar['good'] = self::parsingGood($crawler);
         $ar['prop'] = self::parsingGoodProperies($crawler);
 
-        $ar['good']['cat_id'] = $ar['cats-save']['nowCat'];
+        $ar['good']['cat-id'] = $ar['cats-save']['nowCat'];
 
         $ar['good']['img'] = self::parsingGoodSaveImg($goodUri, $ar['good']['imgOrigin'] ?? '');
 
@@ -146,8 +272,12 @@ class GoodController extends Controller
     {
         $g = [];
 
+
+        $cr = $crawler->filter('.product-single-top');
+
         try {
-            $g['name'] = $crawler->filter('h1[itemprop=name]')->text();
+            // $g['name'] = $crawler->filter('h1[itemprop=name]')->text();
+            $g['name'] = $cr->filter('h1[itemprop=name]')->text();
         } catch (\Throwable $th) {
         }
 
@@ -192,11 +322,23 @@ class GoodController extends Controller
         } catch (\Throwable $th) {
         }
         try {
-            $g['price'] = preg_replace("/[^,.0-9]/", '',  $crawler->filter('div.price')->text());
+
+            $g['price2'] =
+                $price_no = $crawler->filter('div.product-discontinued')->text();
+            $g['price'] = NULL;
+            // preg_replace("/[^,.0-9]/", '',  $crawler->filter('div.price')->text());
         } catch (\Throwable $th) {
+            try {
+                // $g['price'] = preg_replace("/[^,.0-9]/", '',  $crawler->filter('div.price')->text());
+                $g['price'] = preg_replace("/[^,.0-9]/", '',  $cr->filter('div.price')->text());
+            } catch (\Throwable $th) {
+            }
         }
+
+
         try {
-            $g['price-old'] = preg_replace("/[^,.0-9]/", '', $crawler->filter('div.old-price')->text());
+            // $g['price-old'] = preg_replace("/[^,.0-9]/", '', $crawler->filter('div.old-price')->text());
+            $g['price-old'] = preg_replace("/[^,.0-9]/", '', $cr->filter('div.old-price')->text());
         } catch (\Throwable $th) {
         }
         try {
@@ -560,26 +702,26 @@ class GoodController extends Controller
 
 
 
-// Go to URL
-$driver->get('https://en.wikipedia.org/wiki/Selenium_(software)');
+        // Go to URL
+        $driver->get('https://en.wikipedia.org/wiki/Selenium_(software)');
 
-// Find search element by its id, write 'PHP' inside and submit
-$driver->findElement(WebDriverBy::id('searchInput')) // find search input element
-    ->sendKeys('PHP') // fill the search box
-    ->submit(); // submit the whole form
+        // Find search element by its id, write 'PHP' inside and submit
+        $driver->findElement(WebDriverBy::id('searchInput')) // find search input element
+            ->sendKeys('PHP') // fill the search box
+            ->submit(); // submit the whole form
 
-// Find element of 'History' item in menu by its css selector
-$historyButton = $driver->findElement(
-    WebDriverBy::cssSelector('#ca-history a')
-);
-// Read text of the element and print it to output
-echo 'About to click to a button with text: ' . $historyButton->getText();
+        // Find element of 'History' item in menu by its css selector
+        $historyButton = $driver->findElement(
+            WebDriverBy::cssSelector('#ca-history a')
+        );
+        // Read text of the element and print it to output
+        echo 'About to click to a button with text: ' . $historyButton->getText();
 
-// Click the element to navigate to revision history page
-$historyButton->click();
+        // Click the element to navigate to revision history page
+        $historyButton->click();
 
-// Make sure to always call quit() at the end to terminate the browser session
-$driver->quit();
+        // Make sure to always call quit() at the end to terminate the browser session
+        $driver->quit();
 
 
 

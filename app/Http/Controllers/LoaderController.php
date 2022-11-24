@@ -19,6 +19,7 @@ class LoaderController extends Controller
     {
         $r = [
             'uri' => $uri,
+            'result_code' => 0,
             // 'to_file' => $saveToFile,
             'dop' => $dops
         ];
@@ -67,8 +68,8 @@ class LoaderController extends Controller
                     $dops['addToGet'] ?? []
                 );
 
-                if (empty($saveToFile))
-                    return $rr->body();
+                // if (empty($saveToFile))
+                //     return $rr->body();
 
                 $r['content'] = $rr->body();
                 // Storage::put($saveToFile, $r['content']);
@@ -81,6 +82,7 @@ class LoaderController extends Controller
                     'html' => $r['content']
                 ]
             ]);
+
         }
 
         // $ee['$type'] = $type;
