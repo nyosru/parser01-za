@@ -146,8 +146,8 @@ class GoodController extends Controller
 
                 $good_n['updated_at'] = date('Y-m-d H:i:s');
 
-                $res['pageFromInet'][] =                    $good_n;
-                $res['pageFromInet'][] = [ 0 ];
+                $res['pageFromInet'][] = $good_n;
+                $res['pageFromInet'][] = [0];
 
                 // if (isset($good_n['id']))
                 //     unset($good_n['id']);
@@ -170,7 +170,8 @@ class GoodController extends Controller
 
                 Good::find($good->id)->delete();
                 // // $rre = Good::insert($good_n);
-                if (!empty($good_new['cat-id'])) {
+
+                if (!empty($good_n['cat-id'])) {
                     $res['in_ids'][] = Good::insertGetId($good_n);
                     $res['in']++;
                 }
