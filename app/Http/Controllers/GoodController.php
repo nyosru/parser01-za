@@ -99,13 +99,13 @@ class GoodController extends Controller
             // $res['origin2'][] = $good->toArray();
             // dd($good);
 
-            $res['pageFromInet'][] = 
-            $load = LoaderController::loadPageFromInet('https://zakrepi.ru/catalog/' . $good->uri, '', [
-                'addToGet' => ['isAjax' => 'true',]
-            ]);
+            $res['pageFromInet'][] =
+                $load = LoaderController::loadPageFromInet('https://zakrepi.ru/catalog/' . $good->uri, '', [
+                    'addToGet' => ['isAjax' => 'true',]
+                ]);
             // $load['result_code'] = 0;
 
-            
+
             if (!empty($load['content'])) {
 
                 if (strpos($load['content'], 'Страница не найдена') !== false) {
@@ -117,6 +117,7 @@ class GoodController extends Controller
                     Good::find($good->id)->delete();
                 }
 
+                $res['pageFromInet'][] = 
                 $good_new = self::parsingGoodsFromHtml($load['content'], $good->uri);
 
                 // $good_save = $good->toArray();
