@@ -88,8 +88,8 @@ class GoodController extends Controller
             'in_ids' => []
         ];
 
-        
-        $goods = Good::where('load-type', 'new')->limit(20)->get();
+
+        $goods = Good::where('load-type', 'new')->limit(5)->get();
         // // dd([__FILE__, __LINE__,$goods]);
         foreach ($goods as $good) {
 
@@ -154,7 +154,7 @@ class GoodController extends Controller
                 // );
                 // echo ' . ';
 
-                flush();
+                // flush();
 
                 Good::find($good->id)->delete();
                 // // $rre = Good::insert($good_n);

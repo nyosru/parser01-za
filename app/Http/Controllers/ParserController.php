@@ -88,12 +88,10 @@ class ParserController extends Controller
     public function go()
     {
 
-        set_time_limit(60);
-
+        // set_time_limit(60);
         // dd( __FILE__, __LINE__ );
 
         $n = self::howNextStep();
-
         $n['status'] = self::index();
 
         // dd(__FILE__, __LINE__, [ 11 , 22 , 33 ] );
