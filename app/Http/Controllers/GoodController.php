@@ -89,8 +89,8 @@ class GoodController extends Controller
         ];
 
 
-        $goods = Good::where('load-type', 'new')->limit(5)->get();
-        $res['origin'] = $goods->toArray();
+        $goods = Good::where('load-type', 'new')->limit(20)->get();
+        // $res['origin'] = $goods->toArray();
         $res['origin2'] = [];
         $res['pageFromInet'] = [];
         // // dd([__FILE__, __LINE__,$goods]);
