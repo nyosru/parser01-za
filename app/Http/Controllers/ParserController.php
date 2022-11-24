@@ -115,9 +115,7 @@ class ParserController extends Controller
             // $n['result'] = CatController::get1page();
             // echo '<br/>'.__FILE__;
             // echo '<br/>'.__LINE__;
-
             $n['result'] = GoodController::parsingGoodNewFull();
-
         } elseif ($n['now'] == 'parsing_old_goods') {
             // dd( __FILE__, __LINE__ );
             // $n['result'] = CatController::get1page();

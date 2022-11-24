@@ -90,9 +90,12 @@ class GoodController extends Controller
 
 
         $goods = Good::where('load-type', 'new')->limit(5)->get();
+        $res['origin'] = $goods->toArray();
+        $res['origin2'] = [];
         // // dd([__FILE__, __LINE__,$goods]);
         foreach ($goods as $good) {
 
+            $res['origin2'][] = $good->toArray();
             // dd($good);
 
             $load = LoaderController::loadPageFromInet('https://zakrepi.ru/catalog/' . $good->uri, '', [
