@@ -95,9 +95,9 @@ class ParserController extends Controller
         // $free = disk_free_space($_SERVER['DOCUMENT_ROOT']);
         $n = self::howNextStep();
 
-        $free = disk_total_space($_SERVER['DOCUMENT_ROOT']);
-        $n['free_mb'] = round($free / 1024 / 1024);
-        
+        // $free = disk_total_space($_SERVER['DOCUMENT_ROOT']);
+        // $n['free_mb'] = round($free / 1024 / 1024);
+
         $n['status'] = self::index();
 
         // dd(__FILE__, __LINE__, [ 11 , 22 , 33 ] );
