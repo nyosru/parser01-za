@@ -24,6 +24,27 @@ class LoaderController extends Controller
             'dop' => $dops
         ];
         // dd($r);
+
+        $rr = Http::retry(3, 300)->get(
+            $uri,
+            $dops['addToGet'] ?? []
+        );
+
+        $r['content'] = $rr->body();
+
+        // $ee['$type'] = $type;
+        return $r;
+    }
+    
+    public function loadPageFromInet0(string $uri, $saveToFile = null, array $dops = [])
+    {
+        $r = [
+            'uri' => $uri,
+            'result_code' => 0,
+            // 'to_file' => $saveToFile,
+            'dop' => $dops
+        ];
+        // dd($r);
         $uriInBd = $uri;
         if (!empty($dops)) {
             if (!empty($dops['addToGet'])) {
@@ -82,7 +103,6 @@ class LoaderController extends Controller
                     'html' => $r['content']
                 ]
             ]);
-
         }
 
         // $ee['$type'] = $type;

@@ -79,7 +79,6 @@ class ParserController extends Controller
 
     }
 
-
     /**
      * тукенция запускаемая 500 раз в минуту
      *
