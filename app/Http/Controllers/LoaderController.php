@@ -25,12 +25,17 @@ class LoaderController extends Controller
         ];
         // dd($r);
 
-        $rr = Http::retry(3, 300)->get(
-            $uri,
-            $dops['addToGet'] ?? []
-        );
+        try {
+            $rr = Http::retry(3, 300)->get(
+                $uri,
+                $dops['addToGet'] ?? []
+            );
 
-        $r['content'] = $rr->body();
+            $r['content'] = $rr->body();
+        } catch (\Throwable $th) {
+            //throw $th;
+            return false;
+        }
 
         // $ee['$type'] = $type;
         return $r;
@@ -84,24 +89,17 @@ class LoaderController extends Controller
                 // $jar = new \GuzzleHttp\Cookie\CookieJar();
                 // $client->request('GET', '/get', ['cookies' => $jar]);
 
-                try {
+                $rr = Http::get(
+                    $uri,
+                    $dops['addToGet'] ?? []
+                );
 
-                    $rr = Http::get(
-                        $uri,
-                        $dops['addToGet'] ?? []
-                    );
+                // if (empty($saveToFile))
+                //     return $rr->body();
 
+                $r['content'] = $rr->body();
+                // Storage::put($saveToFile, $r['content']);
 
-                    // if (empty($saveToFile))
-                    //     return $rr->body();
-
-                    $r['content'] = $rr->body();
-                    // Storage::put($saveToFile, $r['content']);
-
-                } catch (\Throwable $th) {
-                    //throw $th;
-                    return false;
-                }
             }
 
             Page::insert([
