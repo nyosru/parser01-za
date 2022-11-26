@@ -60,7 +60,7 @@ class CreateGood extends Migration
                 // ->unsigned()
             ;
 
-            $table->set('load-type', ['new', 'loaded', 'full'])
+            $table->set('load-type', ['new', 'loaded', 'full','delete'])
                 ->default('new')
                 ->comment('статус загрузки первая и с полной страницы');
 
