@@ -213,6 +213,7 @@ class GoodController extends Controller
             // // $r = self::parsingGoodsFromHtml($goodPage[0]->html, $good->uri);
             // // echo '<pre>', print_r($r), '</pre>';
             // // // echo '<pre>', htmlspecialchars($html0), '</pre>';
+            sleep(1);
         }
         return $res;
     }
