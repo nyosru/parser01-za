@@ -85,6 +85,24 @@ class ParserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    public function status()
+    {
+        $r = [];
+
+        $r['cats'] = self::scanCatalogs();
+        $r['goods'] = self::scanGoods();
+
+        // return $r;
+        return response()->json($r);
+
+    }
+
+
+    /**
+     * тукенция запускаемая 500 раз в минуту
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function go()
     {
 
