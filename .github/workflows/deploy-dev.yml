@@ -9,7 +9,6 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-
       - name: git pull on server
         uses: appleboy/ssh-action@master
         with:
@@ -24,7 +23,7 @@ jobs:
             git config --global user.name "Sergey" 
             git fetch --all 
             git reset --hard origin/dev
-          
+
       # - name: laravel migrate
       #   uses: appleboy/ssh-action@master
       #   with:
@@ -44,7 +43,7 @@ jobs:
             cd ${{ secrets.FOLDER_DEV }} 
             /opt/php74/bin/php ./composer.phar i --ignore-platform-req=ext-zip
             /opt/php74/bin/php artisan migrate
-          
+
       # - name: setup npm
       #   uses: appleboy/ssh-action@master
       #   with:
@@ -53,8 +52,8 @@ jobs:
       #     password: ${{ secrets.SERVER_PASSWORD }}
       #     script: |
       #       cd www
-      #       cd ${{ secrets.FOLDER_DEV }} 
-      #       npm i 
+      #       cd ${{ secrets.FOLDER_DEV }}
+      #       npm i
       #       npm run dev
       #     # script: cd www && cd ${{ secrets.FOLDER }} && npm i && npm run dev
 
@@ -62,11 +61,10 @@ jobs:
         uses: appleboy/telegram-action@master
         with:
           # to: ${{ secrets.TELEGRAM_TO }}
-          to: 360209578, # phpcat, 
+          to: 360209578, # phpcat,
           # 5152088168, # serhio
           token: ${{ secrets.TELEGRAM_TOKEN }}
           message: |
-            +++ пулл в репу ${{ github.repository }} +++
-            👨🏻‍💻 ${{github.actor}} в репозиторий 
-            сделал ${{ github.event_name }}. задание ${{github.job}}.
-            
+            +++ ${{ github.event_name }} в ${{ github.repository }} +++
+            👨🏻‍💻 ${{github.actor}} 
+             задание ${{github.job}}.

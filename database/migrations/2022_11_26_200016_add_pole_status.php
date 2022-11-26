@@ -14,7 +14,7 @@ class AddPoleStatus extends Migration
     public function up()
     {
         Schema::table('goods', function (Blueprint $table) {
-            $table->set('load-type', ['new', 'loaded', 'full','error'])
+            $table->enum('load-type', ['new', 'loaded', 'full', 'error'])
                 ->default('new')
                 ->comment('статус загрузки первая и с полной страницы')
                 ->change();
@@ -29,7 +29,7 @@ class AddPoleStatus extends Migration
     public function down()
     {
         Schema::table('goods', function (Blueprint $table) {
-            $table->set('load-type', ['new', 'loaded', 'full'])
+            $table->enum('load-type', ['new', 'loaded', 'full'])
                 ->default('new')
                 ->comment('статус загрузки первая и с полной страницы')
                 ->change();
