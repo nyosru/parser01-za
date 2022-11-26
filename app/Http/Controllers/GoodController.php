@@ -89,7 +89,7 @@ class GoodController extends Controller
         ];
 
 
-        $goods = Good::where('load-type', 'new')->limit(10)->get();
+        $goods = Good::where('load-type', 'new')->orWhere('load-type', 'loaded')->limit(10)->get();
         // $res['origin'] = $goods->toArray();
 
         $res['origin2'] = [];
@@ -102,9 +102,9 @@ class GoodController extends Controller
             // dd($good);
 
             // $res['pageFromInet'][] =
-                $load = LoaderController::loadPageFromInet('https://zakrepi.ru/catalog/' . $good->uri, '', [
-                    'addToGet' => ['isAjax' => 'true',]
-                ]);
+            $load = LoaderController::loadPageFromInet('https://zakrepi.ru/catalog/' . $good->uri, '', [
+                'addToGet' => ['isAjax' => 'true',]
+            ]);
             // $load['result_code'] = 0;
 
 
@@ -120,7 +120,7 @@ class GoodController extends Controller
                 }
 
                 // $res['pageFromInet'][] =
-                    $good_new = self::parsingGoodsFromHtml($load['content'], $good->uri);
+                $good_new = self::parsingGoodsFromHtml($load['content'], $good->uri);
 
                 // $good_save = $good->toArray();
                 $good_n0 = array_merge($good->toArray(), $good_new['good']);
