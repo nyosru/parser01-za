@@ -44,8 +44,7 @@ jobs:
             cd ${{ secrets.FOLDER_DEV }} 
             /opt/php74/bin/php ./composer.phar i --ignore-platform-req=ext-zip
             /opt/php74/bin/php artisan migrate
-            
-
+          
       # - name: setup npm
       #   uses: appleboy/ssh-action@master
       #   with:
@@ -67,7 +66,7 @@ jobs:
           # 5152088168, # serhio
           token: ${{ secrets.TELEGRAM_TOKEN }}
           message: |
-            +++ пулл в репу bu_dev +++
-            👨🏻‍💻 ${{github.actor}} в репозиторий ${{ github.repository }}
+            +++ пулл в репу ${{ github.repository }} +++
+            👨🏻‍💻 ${{github.actor}} в репозиторий 
             сделал ${{ github.event_name }}. задание ${{github.job}}.
             
