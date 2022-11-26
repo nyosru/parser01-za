@@ -35,7 +35,7 @@ class LoaderController extends Controller
         // $ee['$type'] = $type;
         return $r;
     }
-    
+
     public function loadPageFromInet0(string $uri, $saveToFile = null, array $dops = [])
     {
         $r = [
@@ -84,17 +84,24 @@ class LoaderController extends Controller
                 // $jar = new \GuzzleHttp\Cookie\CookieJar();
                 // $client->request('GET', '/get', ['cookies' => $jar]);
 
-                $rr = Http::get(
-                    $uri,
-                    $dops['addToGet'] ?? []
-                );
+                try {
 
-                // if (empty($saveToFile))
-                //     return $rr->body();
+                    $rr = Http::get(
+                        $uri,
+                        $dops['addToGet'] ?? []
+                    );
 
-                $r['content'] = $rr->body();
-                // Storage::put($saveToFile, $r['content']);
 
+                    // if (empty($saveToFile))
+                    //     return $rr->body();
+
+                    $r['content'] = $rr->body();
+                    // Storage::put($saveToFile, $r['content']);
+
+                } catch (\Throwable $th) {
+                    //throw $th;
+                    return false;
+                }
             }
 
             Page::insert([

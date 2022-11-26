@@ -107,6 +107,10 @@ class GoodController extends Controller
             ]);
             // $load['result_code'] = 0;
 
+            if( $load === false ){
+                $res['in_ids'][] = 'error load';
+                continue;
+            }
 
             if (!empty($load['content'])) {
 
